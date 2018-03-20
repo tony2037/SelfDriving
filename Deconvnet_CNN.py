@@ -206,9 +206,9 @@ class DeconvNet:
         deconv_1_2 = self.deconv_layer(unpool_1, [3, 3, 64, 64], 64, 'deconv_1_2')
         deconv_1_1 = self.deconv_layer(deconv_1_2, [3, 3, 32, 64], 32, 'deconv_1_1')
 
-        score_1 = self.deconv_layer(deconv_1_1, [1, 1, 21, 32], 21, 'score_1')
+        score_1 = self.deconv_layer(deconv_1_1, [1, 1, 5, 32], 5, 'score_1')
 
-        logits = tf.reshape(score_1, (-1, 21))
+        logits = tf.reshape(score_1, (-1, 5))
         cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=tf.reshape(expected, [-1]), logits=logits, name='x_entropy')
         self.loss = tf.reduce_mean(cross_entropy, name='x_entropy_mean')
 
