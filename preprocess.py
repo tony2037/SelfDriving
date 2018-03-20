@@ -142,6 +142,12 @@ def transform_to_npy():
         print(result_img.shape)
         output.append(result_img)
         
-    if((output.shape == (78,512,256,5)).all()):
+    if( np.array(output).shape == (78,512,256,5)):
         print("dimmension check")
-        np.save("y.npy", output)
+        np.save("./dataset/preprocess_image/y/y.npy", output)
+    else:
+        print("dimmension error")
+        print(np.array(output).shape)
+
+if __name__ == '__main__':
+    transform_to_npy()
