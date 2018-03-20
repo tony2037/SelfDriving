@@ -122,3 +122,26 @@ def refine():
         print(ToBeResize.shape)
         BeResize = resize(ToBeResize, width=int(ToBeResize.shape[1] /4))
         cv2.imwrite(save_path_y + _y, BeResize)
+
+def transform_to_npy():
+    dealing_path = './dataset/preprocess_image/y/'
+    dealing_list = []
+    output = []
+    for (dirpath, dirnames, filenames) in walk(dealing_path):
+        dealing_list.extend(filenames)
+
+    for dealing_y in dealing_list:
+        img = cv2.imread(dealing_path + dealing_y)
+        result_img = np.zeros((img.shape[1], img.shape[0],5), dtype=float, order='C')
+        
+        print(img.shape)
+        for h in range(0,img.shape[1]): #(h=0;h<img.shape[1];h++):
+            for w in range(0,img.shape[0]): #(w=0;w<img.shape[0];w++):
+                result_img[h][w] = classify(img[w][h])
+        
+        print(result_img.shape)
+        output.append(result_img)
+        
+    if((output.shape == (78,512,256,5)).all()):
+        print("dimmension check")
+        np.save("y.npy", output)
