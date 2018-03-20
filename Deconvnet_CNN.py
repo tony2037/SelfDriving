@@ -40,6 +40,7 @@ class DeconvNet:
         argument:
             shape : The shape of Bias
         """
+        print(shape)
         initial = tf.truncated_normal(shape, stddev=0.1)
         return tf.Variable(initial)
     
@@ -58,10 +59,10 @@ class DeconvNet:
             activation funtion : all using relu
         """
         W = self.weight_variable(W_shape)
-        b = self.bias_variable(b_shape)
-        return tf.nn.relu(tf.nn.conv2d(x, W, stride=[1,1,1,1], padding=padding) + b)
+        b = self.bias_variable([b_shape])
+        return tf.nn.relu(tf.nn.conv2d(x, W, strides=[1,1,1,1], padding=padding) + b)
         
-    def pooling_layer(self, x):
+    def pool_layer(self, x):
         """
         Pooling layer
         argument:
@@ -258,3 +259,4 @@ class DeconvNet:
 
 if __name__ == '__main__':
     test_model = DeconvNet()
+    test_model.build()
