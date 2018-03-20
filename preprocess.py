@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from os import walk
 
 #labels = {
 #[0,0,0]:["car", [1, 0, 0, 0, 0]],
@@ -64,7 +65,7 @@ def resize(image, width=None, height=None, inter=cv2.INTER_LINEAR):
     # 返回縮放後的image
     return resized
 
-if __name__ == '__main__':
+def demo():
     #img = cv2.imread("./gtFine/train/darmstadt/darmstadt_000000_000019_gtFine_color.png")
 
     #print(img.shape)
@@ -74,7 +75,50 @@ if __name__ == '__main__':
     try_resize = cv2.imread("./dataset/leftImg8bit/train/bremen/bremen_000002_000019_leftImg8bit.png")
     cv2.imshow("原圖", try_resize)
 
-    print(try_resize.shape[1])
     rotate = resize(try_resize, width= int(try_resize.shape[1] /4))
     cv2.imshow("翻轉圖", rotate)
     cv2.waitKey(0)
+
+    try_y_resize = cv2.imread("./dataset/gtFine/train/bremen/bremen_000000_000019_gtFine_color.png")
+    cv2.imshow("答案", try_y_resize)
+
+    y_rotate = resize(try_y_resize, width= int(try_y_resize.shape[1] /4))
+    cv2.imshow("翻轉答案", y_rotate)
+    cv2.waitKey(0)
+
+def refine():
+    list_x = []
+    dirpath_x = ''
+    save_path_x = "./dataset/preprocess_image/x/"
+
+    list_y = []
+    dirpath_y = ''
+    save_path_y = './dataset/preprocess_image/y/'
+
+
+    for (dirpath, dirnames, filenames) in walk("./dataset/leftImg8bit/train/bremen"):
+        #print(dirpath, dirnames, filenames)
+        dirpath_x = dirpath
+        list_x.extend(filenames)
+        break
+    
+    for x in list_x:
+        print(dirpath_x + "/" + x)
+        ToBeResize = cv2.imread((dirpath_x + "/" + x))
+        print(ToBeResize.shape)
+        BeResize = resize(ToBeResize, width=int(ToBeResize.shape[1] /4))
+        cv2.imwrite(save_path_x + x, BeResize)
+
+    for (dirpath, dirnames, filenames) in walk("./dataset/gtFine/train/bremen"):
+        #print(dirpath, dirnames, filenames)
+        dirpath_y = dirpath
+        list_y.extend(filenames)
+        break
+
+    for y in list_x:
+        _y = y[0:-15] + "gtFine_color.png"
+        print(dirpath_y + "/" + _y)
+        ToBeResize = cv2.imread((dirpath_y + "/" + _y))
+        print(ToBeResize.shape)
+        BeResize = resize(ToBeResize, width=int(ToBeResize.shape[1] /4))
+        cv2.imwrite(save_path_y + _y, BeResize)
