@@ -19,7 +19,8 @@ import cv2
 class DeconvNet:
     
     def __init__(self, checkpoint_dir='./checkpoints/'):
-        self.saver = tf.train.Saver(max_to_keep = 5, keep_checkpoint_every_n_hours =1)
+        #self.saver = tf.train.Saver(max_to_keep = 5, keep_checkpoint_every_n_hours =1)
+        #self.saver = tf.train.Saver()
         config = tf.ConfigProto(log_device_placement=True, allow_soft_placement=True)
         self.session = tf.Session(config = config)
         self.session.run(tf.global_variables_initializer())
@@ -218,6 +219,7 @@ class DeconvNet:
         self.accuracy = tf.reduce_sum(tf.pow(self.prediction - expected, 2))
     
     def train(self, train_stage=1, training_steps=5, restore_session=False, learning_rate=1e-6):
+        self.saver = tf.train.Saver(max_to_keep = 5, keep_checkpoint_every_n_hours =1)
         if restore_session:
             step_start = restore_session()
         else:
@@ -254,3 +256,5 @@ class DeconvNet:
                 self.saver.save(self.session, self.checkpoint_dir+'model', global_step=i)
                 print('Model {} saved'.format(i))
 
+if __name__ == '__main__':
+    test_model = DeconvNet()
