@@ -257,6 +257,9 @@ class DeconvNet:
                 self.saver.save(self.session, self.checkpoint_dir+'model', global_step=i)
                 print('Model {} saved'.format(i))
 
+def Generate_test_tensor():
+    None
+
 if __name__ == '__main__':
     test_model = DeconvNet()
     test_model.build()
