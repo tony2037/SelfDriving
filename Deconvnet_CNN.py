@@ -12,6 +12,8 @@ import tarfile
 import numpy as np
 import cv2
 
+import pdb
+
 
 # In[10]:
 
@@ -258,17 +260,24 @@ class DeconvNet:
                 print('Model {} saved'.format(i))
 
 def Generate_test_tensor():
-    filename_queue = tf.train.string_input_producer(['./dataset/preprocess_image/x/bremen_000002_000019_leftImg8bit.png']) #  list of files to read
+    filename_queue = tf.train.string_input_producer(['/dataset/preprocess_image/x']) #  list of files to read
 
     reader = tf.WholeFileReader()
     key, value = reader.read(filename_queue)
-    print("key value",key, value)
 
     my_img = tf.image.decode_png(value) # use png or jpg decoder based on your files.
     with tf.Session() as sess:
-        sess.run(my_img)
+        sess.run(tf.global_variables_initializer())
+        a = sess.run(my_img)
+        print(a)
+    return my_img
+
+def Image_to_vector():
+    None                                                       
 
 if __name__ == '__main__':
     #test_model = DeconvNet()
     #test_model.build()
-    Generate_test_tensor()
+    #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+    #Generate_test_tensor()
+    None
