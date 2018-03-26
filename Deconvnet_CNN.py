@@ -272,14 +272,39 @@ def Generate_test_tensor():
         print(a)
     return my_img
 
+def _parse_function(filename, label):
+  image_string = tf.read_file(filename)
+  image_decoded = tf.image.decode_image(image_string)
+  #image_resized = tf.image.resize_images(image_decoded, [28, 28])
+  return image_resized, label
+
 def Generate_test_tensor_v2():
+    """
+    1 traveling ./dataset/preprocess_image/x/ to get all the files's name
+    2 pass the list to tf.constant() as filenames
+    """
     dealing_path = './dataset/preprocess_image/x/'
     dealing_list = []
     for (dirpath, dirnames, filenames) in os.walk(dealing_path):
         dealing_list.extend(filenames)
     filenames = tf.constant(dealing_list)
-    image_string = tf.read_file(filenames[0])
-    image_decoded = tf.image.decode_image(image_string)
+    """
+    I have to figure out some way to get all the labels as the following format
+    1 traveling ./dataset/preprocess_image/ys.npy/ to get all the files's name
+    2 np.load the array
+    """
+    #labels = tf.constant([0, 37, ...])
+    
+    dealing_path = './dataset/preprocess_image/ys.npy/'
+    dealing_list = []
+    for (dirpath, dirnames, filenames) in walk(dealing_path):
+        dealing_list.extend(filenames)
+
+    for dealing_npy in dealing_list:
+        np.load(dealing_path + dealing_y)
+
+    dataset = tf.data.Dataset.from_tensor_slices((filenames, labels))
+    dataset = dataset.map(_parse_function)
 
 if __name__ == '__main__':
     #test_model = DeconvNet()
