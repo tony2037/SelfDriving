@@ -270,7 +270,10 @@ def Generate_test_tensor():
         sess.run(tf.global_variables_initializer())
         a = sess.run(my_img)
         print(a)
-    return my_img                       
+    return my_img
+
+def Generate_test_tensor_v2():
+    filenames = tf.constant(["/dataset/preprocess_image/x/bremen_000002_000019_leftImg8bit.png" ...])                       
 
 if __name__ == '__main__':
     #test_model = DeconvNet()
