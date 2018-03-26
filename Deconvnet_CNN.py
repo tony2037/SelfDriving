@@ -273,11 +273,17 @@ def Generate_test_tensor():
     return my_img
 
 def Generate_test_tensor_v2():
-    filenames = tf.constant(["/dataset/preprocess_image/x/bremen_000002_000019_leftImg8bit.png" ...])                       
+    dealing_path = './dataset/preprocess_image/x/'
+    dealing_list = []
+    for (dirpath, dirnames, filenames) in os.walk(dealing_path):
+        dealing_list.extend(filenames)
+    filenames = tf.constant(dealing_list)
+    image_string = tf.read_file(filenames[0])
+    image_decoded = tf.image.decode_image(image_string)
 
 if __name__ == '__main__':
     #test_model = DeconvNet()
     #test_model.build()
     #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
     #Generate_test_tensor()
-    None
+    Generate_test_tensor_v2()

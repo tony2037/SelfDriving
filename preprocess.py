@@ -124,6 +124,13 @@ def refine():
         cv2.imwrite(save_path_y + _y, BeResize)
 
 def transform_to_npy():
+    """
+    transform images to npy:
+    dealing_path : the path of the directory dealing .(The "/" at the last is nessassary)
+    
+    output:
+    save as a .npy file 
+    """
     dealing_path = './dataset/preprocess_image/y/'
     dealing_list = []
     output = []
@@ -141,6 +148,13 @@ def transform_to_npy():
         
         print(result_img.shape)
         output.append(result_img)
+
+        if( np.array(result_img).shape == (512,256,5)):
+            print("dimmension check . Saving a" + dealing_y + ".npy file")
+            np.save("./dataset/preprocess_image/ys.npy/" + dealing_y + ".npy", result_img)
+        else:
+            print("dimmension error")
+            print(np.array(result_img).shape)
         
     if( np.array(output).shape == (78,512,256,5)):
         print("dimmension check")
