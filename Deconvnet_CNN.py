@@ -241,6 +241,7 @@ class DeconvNet:
 
         for i in range(step_start, step_start+training_steps):
             
+            """
             # pick random line from file
             random_line = random.choice(trainset)
             image_file = random_line.split(' ')[0]
@@ -250,6 +251,14 @@ class DeconvNet:
             #
             # norm to 21 classes [0-20] (see paper)
             ground_truth = (ground_truth / 255) * 20
+            """
+            """
+            4/7 I don't know how many pics should I feed
+            """
+            image = np.float32(cv2.imread("./dataset/preprocess_image/x/bremen_000002_000019_leftImg8bit.png"))
+
+            ground_truth = np.int64(np.load("./dataset/preprocess_image/ys.npy/bremen_000002_000019_gtFine_color.png.npy"))
+
             print('run train step: '+str(i))
             start = time.time()
             self.train_step.run(session=self.session, feed_dict={self.x: [image], self.y: [ground_truth], self.rate: learning_rate})
@@ -280,6 +289,9 @@ def _parse_function(filename, label):
 
 def Generate_test_tensor_v2():
     """
+    base on tensorflow dataset api
+    """
+    """
     1 traveling ./dataset/preprocess_image/x/ to get all the files's name
     2 pass the list to tf.constant() as filenames
     """
@@ -307,8 +319,7 @@ def Generate_test_tensor_v2():
     dataset = dataset.map(_parse_function)
 
 if __name__ == '__main__':
-    #test_model = DeconvNet()
-    #test_model.build()
+    test_model = DeconvNet()
+    test_model.build()
     #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
     #Generate_test_tensor()
-    Generate_test_tensor_v2()
