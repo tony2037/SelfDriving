@@ -144,9 +144,16 @@ class DeconvNet:
             self.y : labeled image
             self.rate : learning rate 
         """
-        self.x = tf.placeholder(tf.float32, shape=(1, None, None, 3))
-        self.y = tf.placeholder(tf.int64, shape=(1, None, None))
-        expected = tf.expand_dims(self.y, -1)
+        #self.x = tf.placeholder(tf.float32, shape=(1, None, None, 3))
+        #self.y = tf.placeholder(tf.int64, shape=(1, None, None))
+        #expected = tf.expand_dims(self.y, -1)
+        """
+        Change self.x self.y 's type to tf.float32
+        fixed the height and weight to (512, 256)
+        """
+        self.x = tf.placeholder(tf.float32, shape=(None, 512, 256, 3))
+        self.y = tf.placeholder(tf.float32, shape=(None, 512, 256, 5))
+        expected = self.y
         self.rate = tf.placeholder(tf.float32, shape=[])
 
         conv_1_1 = self.conv_layer(self.x, [3, 3, 3, 64], 64, 'conv_1_1')
@@ -212,14 +219,15 @@ class DeconvNet:
 
         score_1 = self.deconv_layer(deconv_1_1, [1, 1, 5, 32], 5, 'score_1')
 
-        logits = tf.reshape(score_1, (-1, 5))
-        cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=tf.reshape(expected, [-1]), logits=logits, name='x_entropy')
-        self.loss = tf.reduce_mean(cross_entropy, name='x_entropy_mean')
+        logits = tf.reshape(score_1, (-1, 5)) # flatten the score_1
+        #cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=tf.reshape(expected, [-1]), logits=logits, name='x_entropy')
+        cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=tf.reshape(expected, [-1,5]), logits=logits, name='cross_entropy')
+        self.loss = tf.reduce_mean(cross_entropy, name='cross_entropy_mean')
 
         self.train_step = tf.train.AdamOptimizer(self.rate).minimize(self.loss)
 
         self.prediction = tf.argmax(tf.reshape(tf.nn.softmax(logits), tf.shape(score_1)), dimension=3)
-        self.accuracy = tf.reduce_sum(tf.pow(self.prediction - expected, 2))
+        #self.accuracy = tf.reduce_sum(tf.pow(self.prediction - expected, 2))
     
     def train(self, train_stage=1, training_steps=5, restore_session=False, learning_rate=1e-6):
         self.saver = tf.train.Saver(max_to_keep = 5, keep_checkpoint_every_n_hours =1)
@@ -257,7 +265,7 @@ class DeconvNet:
             """
             image = np.float32(cv2.imread("./dataset/preprocess_image/x/bremen_000002_000019_leftImg8bit.png"))
 
-            ground_truth = np.int64(np.load("./dataset/preprocess_image/ys.npy/bremen_000002_000019_gtFine_color.png.npy"))
+            ground_truth = np.float32(np.load("./dataset/preprocess_image/ys.npy/bremen_000002_000019_gtFine_color.png.npy"))
 
             print('run train step: '+str(i))
             start = time.time()
