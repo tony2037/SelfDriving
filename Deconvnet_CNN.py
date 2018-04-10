@@ -11,6 +11,7 @@ import time
 import tarfile
 import numpy as np
 import cv2
+import glob
 
 import pdb
 
@@ -151,8 +152,8 @@ class DeconvNet:
         Change self.x self.y 's type to tf.float32
         fixed the height and weight to (512, 256)
         """
-        self.x = tf.placeholder(tf.float32, shape=(None, 512, 256, 3))
-        self.y = tf.placeholder(tf.float32, shape=(None, 512, 256, 5))
+        self.x = tf.placeholder(tf.float32, shape=(None, 256, 512, 3))
+        self.y = tf.placeholder(tf.float32, shape=(None, 256, 512, 5))
         expected = self.y
         self.rate = tf.placeholder(tf.float32, shape=[])
 
@@ -240,6 +241,10 @@ class DeconvNet:
             """
             feed in train data
             """
+            x_path = "./dataset/preprocess_image/x"
+            y_path = "./dataset/preprocess_image/ys.npy"
+            x_lists = glob.glob(x_path + "/*.png")
+            y_lists = glob.glob(y_path + "/*.npy")
             trainset = None
         else:
             """
@@ -263,9 +268,25 @@ class DeconvNet:
             """
             4/7 I don't know how many pics should I feed
             """
+            """
             image = np.float32(cv2.imread("./dataset/preprocess_image/x/bremen_000002_000019_leftImg8bit.png"))
 
             ground_truth = np.float32(np.load("./dataset/preprocess_image/ys.npy/bremen_000002_000019_gtFine_color.png.npy"))
+            """
+            image = np.zeros((len(x_lists), 256, 512, 3)) # batch size = 78 for testing the code (batch size, h, w, 3)
+            ground_truth = np.zeros(len(y_lists), 256, 512, 5)  # (batch size, h, w , classes)
+            random.shuffle(x_lists)
+            random.shuffle(y_lists)
+            for j in range(len(x_lists)):
+                img = cv2.imread(x_lists[j])
+                image[j,:,:,:] = img
+            assert image.shape == (len(x_lists, 256, 512, 3))
+            image = np.float32(image)
+
+            for j in range(len(y_lists)):
+                ground_truth[j,:,:,:] = np.float32(np.load(y_lists[j]))
+            assert ground_truth.shape == (len(y_lists), 256, 512, 5) 
+            ground_truth = np.float32(ground_truth)
 
             print('run train step: '+str(i))
             start = time.time()
@@ -329,5 +350,12 @@ def Generate_test_tensor_v2():
 if __name__ == '__main__':
     test_model = DeconvNet()
     test_model.build()
+    x_path = "./dataset/preprocess_image/x"
+    y_path = "./dataset/preprocess_image/ys.npy"
+    x_lists = glob.glob(x_path + "/*.png")
+    y_lists = glob.glob(y_path + "/*.npy")
+    #print(x_lists)
+    image = cv2.imread(x_lists[1])
+    print(image.shape)
     #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
     #Generate_test_tensor()
