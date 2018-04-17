@@ -154,6 +154,8 @@ class DeconvNet:
         """
         self.x = tf.placeholder(tf.float32, shape=(None, 256, 512, 3))
         self.y = tf.placeholder(tf.float32, shape=(None, 256, 512, 5))
+        print("x_shape : " + str(self.x.shape))
+        print("y_shape : " + str(self.y.shape))
         expected = self.y
         self.rate = tf.placeholder(tf.float32, shape=[])
 
@@ -245,7 +247,7 @@ class DeconvNet:
             y_path = "./dataset/preprocess_image/ys.npy"
             x_lists = glob.glob(x_path + "/*.png")
             y_lists = glob.glob(y_path + "/*.npy")
-            trainset = None
+            trainset = [(a,b) for a,b in zip(x_lists, y_lists)]
         else:
             """
             feed in dev data
@@ -274,14 +276,17 @@ class DeconvNet:
             ground_truth = np.float32(np.load("./dataset/preprocess_image/ys.npy/bremen_000002_000019_gtFine_color.png.npy"))
             """
             image = np.zeros((len(x_lists), 256, 512, 3)) # batch size = 78 for testing the code (batch size, h, w, 3)
-            ground_truth = np.zeros(len(y_lists), 256, 512, 5)  # (batch size, h, w , classes)
+            ground_truth = np.zeros((len(y_lists), 256, 512, 5))  # (batch size, h, w , classes)
             random.shuffle(x_lists)
             random.shuffle(y_lists)
             for j in range(len(x_lists)):
                 img = cv2.imread(x_lists[j])
+                print(img.shape)
                 image[j,:,:,:] = img
-            assert image.shape == (len(x_lists, 256, 512, 3))
+            assert image.shape == (len(x_lists), 256, 512, 3)
             image = np.float32(image)
+
+    
 
             for j in range(len(y_lists)):
                 ground_truth[j,:,:,:] = np.float32(np.load(y_lists[j]))
@@ -290,7 +295,8 @@ class DeconvNet:
 
             print('run train step: '+str(i))
             start = time.time()
-            self.train_step.run(session=self.session, feed_dict={self.x: [image], self.y: [ground_truth], self.rate: learning_rate})
+            self.train_step.run(session=self.session, feed_dict={self.x: image, self.y: ground_truth, self.rate: learning_rate})
+            
 
             if i % 10000 == 0:
                 print('step {} finished in {:.2f} s with loss of {:.6f}'.format(i, time.time() - start, self.loss.eval(session=self.session, feed_dict={self.x: [image], self.y: [ground_truth]})))
@@ -349,13 +355,16 @@ def Generate_test_tensor_v2():
 
 if __name__ == '__main__':
     test_model = DeconvNet()
-    test_model.build()
-    x_path = "./dataset/preprocess_image/x"
-    y_path = "./dataset/preprocess_image/ys.npy"
-    x_lists = glob.glob(x_path + "/*.png")
-    y_lists = glob.glob(y_path + "/*.npy")
+
+    with tf.device('/cpu:0'):
+        test_model.build()
+        test_model.train()
+    #x_path = "./dataset/preprocess_image/x"
+    #y_path = "./dataset/preprocess_image/ys.npy"
+    #x_lists = glob.glob(x_path + "/*.png")
+    #y_lists = glob.glob(y_path + "/*.npy")
     #print(x_lists)
-    image = cv2.imread(x_lists[1])
-    print(image.shape)
+    #image = cv2.imread(x_lists[1])
+    #print(image.shape)
     #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
     #Generate_test_tensor()

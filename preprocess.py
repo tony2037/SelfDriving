@@ -163,10 +163,7 @@ def transform_to_npy():
         print("dimmension error")
         print(np.array(output).shape)
 
-def x_to_npy():
-    """
-    SAME AS transform_to_npy() but I am tired to modify my code...
-    """
+def transform_to_npy_v2():
     """
     transform images to npy:
     dealing_path : the path of the directory dealing .(The "/" at the last is nessassary)
@@ -174,39 +171,39 @@ def x_to_npy():
     output:
     save as a .npy file 
     """
-    dealing_path = './dataset/preprocess_image/x/'
+    dealing_path = './dataset/preprocess_image/y/'
     dealing_list = []
     output = []
     for (dirpath, dirnames, filenames) in walk(dealing_path):
         dealing_list.extend(filenames)
 
-    for dealing_x in dealing_list:
-        img = cv2.imread(dealing_path + dealing_x)
-        result_img = np.zeros((img.shape[1], img.shape[0], 3), dtype=float, order='C')
+    for dealing_y in dealing_list:
+        img = cv2.imread(dealing_path + dealing_y)
+        assert img.shape == (256,512,3)
+        result_img = np.zeros((img.shape[0], img.shape[1],5), dtype=float, order='C')
         
         print(img.shape)
-        for h in range(0,img.shape[1]): #(h=0;h<img.shape[1];h++):
-            for w in range(0,img.shape[0]): #(w=0;w<img.shape[0];w++):
-                result_img[h][w] = img[w][h]
+        for h in range(0,img.shape[0]): #(h=0;h<img.shape[0];h++):
+            for w in range(0,img.shape[1]): #(w=0;w<img.shape[1];w++):
+                result_img[h][w] = classify(img[h][w])
         
         print(result_img.shape)
+        assert result_img.shape == (256,512,5)
         output.append(result_img)
 
-        if( np.array(result_img).shape == (512,256,3)):
-            print("dimmension check . Saving a" + dealing_x + ".npy file")
-            np.save("./dataset/preprocess_image/xs.npy/" + dealing_x + ".npy", result_img)
+        if( np.array(result_img).shape == (256,512,5)):
+            print("dimmension check . Saving a" + dealing_y + ".npy file")
+            np.save("./dataset/preprocess_image/ys.npy/" + dealing_y + ".npy", result_img)
         else:
             print("dimmension error")
             print(np.array(result_img).shape)
-    """
-    78 is the files's number
-    """    
-    if( np.array(output).shape == (78,512,256,3)):
+        
+    if( np.array(output).shape == (78,512,256,5)):
         print("dimmension check")
-        np.save("./dataset/preprocess_image/x/x.npy", output)
+        np.save("./dataset/preprocess_image/y/y.npy", output)
     else:
         print("dimmension error")
         print(np.array(output).shape)
 
 if __name__ == '__main__':
-    x_to_npy()
+    transform_to_npy_v2()
