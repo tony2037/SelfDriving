@@ -27,6 +27,7 @@ class DeconvNet:
         config = tf.ConfigProto(log_device_placement=True, allow_soft_placement=True)
         self.session = tf.Session(config = config)
         self.session.run(tf.global_variables_initializer())
+        #self.session.run(tf.initialize_all_variables())
         self.checkpoint_dir = checkpoint_dir
         
     def weight_variable(self, shape):
@@ -231,6 +232,7 @@ class DeconvNet:
 
         self.prediction = tf.argmax(tf.reshape(tf.nn.softmax(logits), tf.shape(score_1)), dimension=3)
         #self.accuracy = tf.reduce_sum(tf.pow(self.prediction - expected, 2))
+        self.session.run(tf.global_variables_initializer())
     
     def train(self, train_stage=1, training_steps=5, restore_session=False, learning_rate=1e-6):
         self.saver = tf.train.Saver(max_to_keep = 5, keep_checkpoint_every_n_hours =1)
