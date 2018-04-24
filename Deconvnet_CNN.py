@@ -12,6 +12,7 @@ import tarfile
 import numpy as np
 import cv2
 import glob
+from loader import loader
 
 import pdb
 
@@ -234,7 +235,7 @@ class DeconvNet:
         #self.accuracy = tf.reduce_sum(tf.pow(self.prediction - expected, 2))
         self.session.run(tf.global_variables_initializer())
     
-    def train(self, train_stage=1, training_steps=5, restore_session=False, learning_rate=1e-6):
+    def train(self, train_stage=1, training_steps=5, restore_session=False, learning_rate=1e-6, batch_size=8):
         self.saver = tf.train.Saver(max_to_keep = 5, keep_checkpoint_every_n_hours =1)
         if restore_session:
             step_start = restore_session()
@@ -245,11 +246,9 @@ class DeconvNet:
             """
             feed in train data
             """
-            x_path = "./dataset/preprocess_image/x_1"
-            y_path = "./dataset/preprocess_image/y_1"
-            x_lists = glob.glob(x_path + "/*.png")
-            y_lists = glob.glob(y_path + "/*.npy")
-            trainset = [(a,b) for a,b in zip(x_lists, y_lists)]
+            x_path = "./dataset/preprocess_image/x"
+            y_path = "./dataset/preprocess_image/ys.npy"
+            data_loader = loader.loader(x_path=x_path, y_path=y_path)
         else:
             """
             feed in dev data
@@ -269,35 +268,26 @@ class DeconvNet:
             # norm to 21 classes [0-20] (see paper)
             ground_truth = (ground_truth / 255) * 20
             """
-            """
-            4/7 I don't know how many pics should I feed
-            """
-            """
-            image = np.float32(cv2.imread("./dataset/preprocess_image/x/bremen_000002_000019_leftImg8bit.png"))
+            image = [] # batch size = 78 for testing the code (batch size, h, w, 3)
+            ground_truth = []  # (batch size, h, w , classes)
+            
+            trainset = data_loader.next_batch(batch_size=batch_size)
 
-            ground_truth = np.float32(np.load("./dataset/preprocess_image/ys.npy/bremen_000002_000019_gtFine_color.png.npy"))
-            """
-            image = np.zeros((len(x_lists), 256, 512, 3)) # batch size = 78 for testing the code (batch size, h, w, 3)
-            ground_truth = np.zeros((len(y_lists), 256, 512, 5))  # (batch size, h, w , classes)
-            random.shuffle(x_lists)
-            random.shuffle(y_lists)
-            for j in range(len(x_lists)):
-                img = cv2.imread(x_lists[j])
-                print(img.shape)
-                image[j,:,:,:] = img
-            assert image.shape == (len(x_lists), 256, 512, 3)
-            image = np.float32(image)
+            for j in range(len(trainset)):
+                img = cv2.imread(trainset[j][0])
+                img = np.float32(img)
+                image.append(img)
+                ground_truth.append(np.float32(np.load(trainset[j][1])))
+               
 
-    
-
-            for j in range(len(y_lists)):
-                ground_truth[j,:,:,:] = np.float32(np.load(y_lists[j]))
-            assert ground_truth.shape == (len(y_lists), 256, 512, 5) 
-            ground_truth = np.float32(ground_truth)
+            image = np.array(image, dtype=np.float32)
+            ground_truth = np.array(ground_truth, dtype=np.float32) 
+            assert image.shape == (len(trainset), 256, 512, 3)
+            assert ground_truth.shape == (len(trainset), 256, 512, 5)
 
             print('run train step: '+str(i))
             start = time.time()
-            self.train_step.run(session=self.session, feed_dict={self.x: image[0:1], self.y: ground_truth[0:1], self.rate: learning_rate})
+            self.train_step.run(session=self.session, feed_dict={self.x: image, self.y: ground_truth, self.rate: learning_rate})
             
 
             if i % 10000 == 0:
@@ -357,10 +347,8 @@ def Generate_test_tensor_v2():
 
 if __name__ == '__main__':
     test_model = DeconvNet()
-
-    with tf.device('/cpu:0'):
-        test_model.build()
-        test_model.train()
+    test_model.build()
+    test_model.train()
     #x_path = "./dataset/preprocess_image/x"
     #y_path = "./dataset/preprocess_image/ys.npy"
     #x_lists = glob.glob(x_path + "/*.png")

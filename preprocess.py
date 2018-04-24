@@ -139,24 +139,24 @@ def transform_to_npy():
 
     for dealing_y in dealing_list:
         img = cv2.imread(dealing_path + dealing_y)
-        result_img = np.zeros((img.shape[1], img.shape[0],5), dtype=float, order='C')
+        result_img = np.zeros((img.shape[0], img.shape[1],5), dtype=float, order='C')
         
         print(img.shape)
-        for h in range(0,img.shape[1]): #(h=0;h<img.shape[1];h++):
-            for w in range(0,img.shape[0]): #(w=0;w<img.shape[0];w++):
-                result_img[h][w] = classify(img[w][h])
+        for h in range(0,img.shape[0]): #(h=0;h<img.shape[1];h++):
+            for w in range(0,img.shape[1]): #(w=0;w<img.shape[0];w++):
+                result_img[h][w] = classify(img[h][w])
         
         print(result_img.shape)
         output.append(result_img)
 
-        if( np.array(result_img).shape == (512,256,5)):
+        if( np.array(result_img).shape == (256,512,5)):
             print("dimmension check . Saving a" + dealing_y + ".npy file")
             np.save("./dataset/preprocess_image/ys.npy/" + dealing_y + ".npy", result_img)
         else:
             print("dimmension error")
             print(np.array(result_img).shape)
         
-    if( np.array(output).shape == (78,512,256,5)):
+    if( np.array(output).shape == (78,256,512,5)):
         print("dimmension check")
         np.save("./dataset/preprocess_image/y/y.npy", output)
     else:
@@ -206,4 +206,4 @@ def transform_to_npy_v2():
         print(np.array(output).shape)
 
 if __name__ == '__main__':
-    transform_to_npy_v2()
+    transform_to_npy()
