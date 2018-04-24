@@ -24,8 +24,8 @@ class DeconvNet:
     def __init__(self, checkpoint_dir='./checkpoints/'):
         #self.saver = tf.train.Saver(max_to_keep = 5, keep_checkpoint_every_n_hours =1)
         #self.saver = tf.train.Saver()
-        config = tf.ConfigProto(log_device_placement=True, allow_soft_placement=True)
-        self.session = tf.Session(config = config)
+        #config = tf.ConfigProto(log_device_placement=True, allow_soft_placement=True)
+        self.session = tf.Session()
         self.session.run(tf.global_variables_initializer())
         #self.session.run(tf.initialize_all_variables())
         self.checkpoint_dir = checkpoint_dir
@@ -245,8 +245,8 @@ class DeconvNet:
             """
             feed in train data
             """
-            x_path = "./dataset/preprocess_image/x"
-            y_path = "./dataset/preprocess_image/ys.npy"
+            x_path = "./dataset/preprocess_image/x_1"
+            y_path = "./dataset/preprocess_image/y_1"
             x_lists = glob.glob(x_path + "/*.png")
             y_lists = glob.glob(y_path + "/*.npy")
             trainset = [(a,b) for a,b in zip(x_lists, y_lists)]
@@ -297,11 +297,11 @@ class DeconvNet:
 
             print('run train step: '+str(i))
             start = time.time()
-            self.train_step.run(session=self.session, feed_dict={self.x: image, self.y: ground_truth, self.rate: learning_rate})
+            self.train_step.run(session=self.session, feed_dict={self.x: image[0:1], self.y: ground_truth[0:1], self.rate: learning_rate})
             
 
             if i % 10000 == 0:
-                print('step {} finished in {:.2f} s with loss of {:.6f}'.format(i, time.time() - start, self.loss.eval(session=self.session, feed_dict={self.x: [image], self.y: [ground_truth]})))
+                print('step {} finished in {:.2f} s with loss of {:.6f}'.format(i, time.time() - start, self.loss.eval(session=self.session, feed_dict={self.x: image, self.y: ground_truth})))
                 self.saver.save(self.session, self.checkpoint_dir+'model', global_step=i)
                 print('Model {} saved'.format(i))
 
