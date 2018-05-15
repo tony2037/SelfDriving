@@ -394,7 +394,7 @@ def Generate_test_tensor_v2():
 if __name__ == '__main__':
     test_model = DeconvNet()
     test_model.build()
-    test_model.train(batch_size=1)
+    #test_model.train(batch_size=1)
     #x_path = "./dataset/preprocess_image/x"
     #y_path = "./dataset/preprocess_image/ys.npy"
     #x_lists = glob.glob(x_path + "/*.png")
