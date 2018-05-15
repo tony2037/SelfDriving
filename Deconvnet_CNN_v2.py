@@ -154,6 +154,8 @@ class DeconvNet:
         Change self.x self.y 's type to tf.float32
         fixed the height and weight to (512, 256)
         """
+        learning_rate=1e-6
+
         self.x = tf.placeholder(tf.float32, shape=(None, 256, 512, 3))
         self.y = tf.placeholder(tf.float32, shape=(None, 256, 512, 5))
         print("x_shape : " + str(self.x.shape))
