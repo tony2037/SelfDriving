@@ -234,6 +234,52 @@ class DeconvNet:
         self.prediction = tf.argmax(tf.reshape(tf.nn.softmax(logits), tf.shape(score_1)), dimension=3)
         #self.accuracy = tf.reduce_sum(tf.pow(self.prediction - expected, 2))
         self.session.run(tf.global_variables_initializer())
+
+        self.saver = tf.train.Saver(max_to_keep = 5, keep_checkpoint_every_n_hours =1)
+
+        x_path = "./dataset/preprocess_image/x"
+        y_path = "./dataset/preprocess_image/ys.npy"
+        data_loader = loader.loader(x_path=x_path, y_path=y_path)
+
+        for i in range(0, 1000):
+            
+            """
+            # pick random line from file
+            random_line = random.choice(trainset)
+            image_file = random_line.split(' ')[0]
+            ground_truth_file = random_line.split(' ')[1]
+            image = np.float32(cv2.imread('data' + image_file))
+            ground_truth = cv2.imread('data' + ground_truth_file[:-1], cv2.IMREAD_GRAYSCALE)
+            #
+            # norm to 21 classes [0-20] (see paper)
+            ground_truth = (ground_truth / 255) * 20
+            """
+            image = [] # batch size = 78 for testing the code (batch size, h, w, 3)
+            ground_truth = []  # (batch size, h, w , classes)
+            
+            trainset = data_loader.next_batch(batch_size=8)
+
+            for j in range(len(trainset)):
+                img = cv2.imread(trainset[j][0])
+                img = np.float32(img)
+                image.append(img)
+                ground_truth.append(np.float32(np.load(trainset[j][1])))
+               
+
+            image = np.array(image, dtype=np.float32)
+            ground_truth = np.array(ground_truth, dtype=np.float32) 
+            assert image.shape == (len(trainset), 256, 512, 3)
+            assert ground_truth.shape == (len(trainset), 256, 512, 5)
+
+            print('run train step: '+str(i))
+            start = time.time()
+            self.train_step.run(session=self.session, feed_dict={self.x: image, self.y: ground_truth, self.rate: learning_rate})
+            
+
+            if i % 10000 == 0:
+                print('step {} finished in {:.2f} s with loss of {:.6f}'.format(i, time.time() - start, self.loss.eval(session=self.session, feed_dict={self.x: image, self.y: ground_truth})))
+                self.saver.save(self.session, self.checkpoint_dir+'model', global_step=i)
+                print('Model {} saved'.format(i))
     
     def train(self, train_stage=1, training_steps=5, restore_session=False, learning_rate=1e-6, batch_size=8):
         self.saver = tf.train.Saver(max_to_keep = 5, keep_checkpoint_every_n_hours =1)
