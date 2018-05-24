@@ -42,7 +42,7 @@ unpool_1 = UnPoolSwitch2D((2, 2), strides=(2,2),
 model = Model(input=inputs, output=[unpool_1, max_1])
 
 # Parrot image from ImageNet http://image-net.org/
-img_in = cv2.imread('./dataset/preprocess_image/x/bremen_000002_000019_leftImg8bit.png')
+img_in = cv2.imread('./dataset/test.png')
 if(not use_color):
     img_in = np.expand_dims(cv2.cvtColor(img_in, cv2.COLOR_RGB2GRAY), axis=2)
     plt.gray()
