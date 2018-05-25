@@ -79,6 +79,13 @@ def y_to_npy():
         assert encoded.shape == (224, 224, 5)
         np.save(y_path + i[27:-4] + ".npy", encoded)
 
+def load_data(total_number=77):
+    x_path = "./dataset/dataset224x224/x/"
+    y_path = "./dataset/dataset224x224/y/"
+    for i in range(0, total_number+1):
+        
+
 if __name__ == "__main__":
     #resize_224x224()
-    y_to_npy()
+    #y_to_npy()
+    load_data(77)

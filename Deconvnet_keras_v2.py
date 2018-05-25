@@ -53,7 +53,7 @@ if __name__ == "__main__":
     model.add(Conv2D(21, (1, 1),strides=(1, 1), padding='same'))
     model.summary()
 
-    model.compile(loss=keras.losses.categorical_crossentropy,
+    model.compile(loss=keras.losses.mean_squared_error,
               optimizer=keras.optimizers.Adam(),
               metrics=['accuracy'])
 
