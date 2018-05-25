@@ -64,15 +64,9 @@ def y_to_npy():
     BGR
     """
     y_path = "./dataset/dataset224x224/y/"
-<<<<<<< HEAD
     image_number = 78
     y_list = []
     for i in range(0, image_number):
-=======
-    image_number = 77
-    y_list = []
-    for i in range(0, image_number+1):
->>>>>>> 4d881198dd405bd894beda002b06ec6c35efb7a2
         y_list.append(y_path + str(i) + ".png")
     
     for i in y_list:
@@ -85,7 +79,6 @@ def y_to_npy():
         assert encoded.shape == (224, 224, 5)
         np.save(y_path + i[27:-4] + ".npy", encoded)
 
-<<<<<<< HEAD
 def load_data(total_number=78):
     x_path = "./dataset/dataset224x224/x/"
     y_path = "./dataset/dataset224x224/y/"
@@ -107,23 +100,12 @@ def load_data(total_number=78):
     return (x_train, y_train), (x_test, y_test)
 
 
-=======
-def load_data(total_number=77):
-    x_path = "./dataset/dataset224x224/x/"
-    y_path = "./dataset/dataset224x224/y/"
-    for i in range(0, total_number+1):
-        
->>>>>>> 4d881198dd405bd894beda002b06ec6c35efb7a2
 
 if __name__ == "__main__":
     #resize_224x224()
     #y_to_npy()
-<<<<<<< HEAD
     x_train = []
     y_train = []
     x_test = []
     y_test = []
     (x_train, y_train), (x_test, y_test) = load_data(78)
-=======
-    load_data(77)
->>>>>>> 4d881198dd405bd894beda002b06ec6c35efb7a2
