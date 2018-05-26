@@ -53,7 +53,7 @@ def train(x_train, y_train, x_test, y_test):
     model.add(UpSampling2D(size=(2, 2)))
     model.add(Conv2DTranspose(64, (3,3), padding='same'))
     model.add(Conv2DTranspose(64, (3,3), padding='same'))
-    model.add(Conv2D(5, (1, 1),strides=(1, 1), padding='same', activation='sigmoid'))
+    model.add(Conv2D(5, (1, 1),strides=(1, 1), padding='same', activation='softmax'))
     model.summary()
 
     model.compile(loss=keras.losses.mean_squared_error,
