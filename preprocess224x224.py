@@ -3,8 +3,8 @@ import numpy as np
 
 
 def resize_224x224():
-    x_path = "./dataset/leftImg8bit/train/dusseldorf/"
-    y_path = "./dataset/gtFine/train/dusseldorf/"
+    x_path = "./dataset/leftImg8bit/train/zurich/"
+    y_path = "./dataset/gtFine/train/zurich/"
 
     x_save_path = "./dataset/dataset224x224/x_/"
     y_save_path = "./dataset/dataset224x224/y_/"
@@ -22,7 +22,7 @@ def resize_224x224():
     log.write(str(counter+ len(x_list)))
 
     for i in x_list:
-        y_list.append(y_path+ i[39:-16]+ "_gtFine_color.png")
+        y_list.append(y_path+ i[35:-16]+ "_gtFine_color.png")
 
     trainset = [(a,b) for a,b in zip(x_list, y_list)]
 
@@ -125,4 +125,9 @@ if __name__ == "__main__":
     x_test = []
     y_test = []
     (x_train, y_train), (x_test, y_test) = load_data(78)
+    """
+    """
+    x_list = glob.glob("./dataset/leftImg8bit/train/zurich/" + "*.png")
+    for i in x_list:
+        print(i[35:-16])
     """
