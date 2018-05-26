@@ -94,7 +94,7 @@ def y_to_npy():
         assert encoded.shape == (224, 224, 5)
         np.save(y_path + i[27:-4] + ".npy", encoded)
 
-def load_data(total_number=78):
+def load_data(total_number=916):
     x_path = "./dataset/dataset224x224/x/"
     y_path = "./dataset/dataset224x224/y/"
 
