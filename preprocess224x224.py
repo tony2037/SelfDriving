@@ -3,18 +3,26 @@ import numpy as np
 
 
 def resize_224x224():
-    x_path = "./dataset/leftImg8bit/train/bremen/"
-    y_path = "./dataset/gtFine/train/bremen/"
+    x_path = "./dataset/leftImg8bit/train/dusseldorf/"
+    y_path = "./dataset/gtFine/train/dusseldorf/"
 
-    x_save_path = "./dataset/dataset224x224/x/"
-    y_save_path = "./dataset/dataset224x224/y/"
+    x_save_path = "./dataset/dataset224x224/x_/"
+    y_save_path = "./dataset/dataset224x224/y_/"
 
-    counter = 0
+    log_path = "./dataset/dataset224x224/x/log"
+    log = open(log_path)
+    counter = log.read()
+    counter = int(counter)
+    log.close()
 
     x_list = glob.glob(x_path + "*.png")
     y_list = []
+
+    log = open(log_path, "w")
+    log.write(str(counter+ len(x_list)))
+
     for i in x_list:
-        y_list.append(y_path+ i[35:-16]+ "_gtFine_color.png")
+        y_list.append(y_path+ i[39:-16]+ "_gtFine_color.png")
 
     trainset = [(a,b) for a,b in zip(x_list, y_list)]
 
@@ -64,9 +72,16 @@ def y_to_npy():
     BGR
     """
     y_path = "./dataset/dataset224x224/y/"
-    image_number = 78
+    log_path = "./dataset/dataset224x224/y/log"
+    log = open(log_path)
+    start_number = log.read()
+    start_number = int(start_number)
+    log.close()
+    image_number = int(open("./dataset/dataset224x224/x/log").read()) - start_number
+    log = open(log_path, "w")
+    log.write(str(start_number+image_number))
     y_list = []
-    for i in range(0, image_number):
+    for i in range(start_number, start_number+image_number):
         y_list.append(y_path + str(i) + ".png")
     
     for i in y_list:
@@ -103,9 +118,11 @@ def load_data(total_number=78):
 
 if __name__ == "__main__":
     #resize_224x224()
-    #y_to_npy()
+    y_to_npy()
+    """
     x_train = []
     y_train = []
     x_test = []
     y_test = []
     (x_train, y_train), (x_test, y_test) = load_data(78)
+    """
