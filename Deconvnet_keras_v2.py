@@ -57,7 +57,7 @@ def train(x_train, y_train, x_test, y_test):
     model.add(Conv2D(5, (1, 1),strides=(1, 1), padding='same', activation='softmax'))
     model.summary()
 
-    model.compile(loss=keras.losses.mean_squared_error,
+    model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adam(),
               metrics=['accuracy'])
 
