@@ -1,4 +1,4 @@
-from keras.models import Model, Sequential
+from keras.models import Model, Sequential, load_model
 from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, UpSampling2D, Conv2DTranspose
 import cv2
 
@@ -51,6 +51,12 @@ def create_model():
     model.summary()
     return model
 
+def load_trained_model_with_FullModel(Model_path="./model/weights.hdf5", test_x_path="./dataset/dataset224x224/test_x/test.png"):
+    model = load_model(Model_path)
+    test_x = cv2.imread(test_x_path)
+    predict = model.predict(test_x, verbose=1)
+    print(predict.shape)
+
 def load_trained_model_with_weight(weights_path="./model/weights.hdf5", test_x_path="./dataset/dataset224x224/test_x/test.png"):
    model = create_model()
    model.load_weights(weights_path)
@@ -61,4 +67,4 @@ def load_trained_model_with_weight(weights_path="./model/weights.hdf5", test_x_p
 
 
 if __name__ == "__main__":
-    load_trained_model_with_weight()
+    load_trained_model_with_FullModel()
