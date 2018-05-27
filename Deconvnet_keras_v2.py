@@ -1,5 +1,6 @@
 from keras.models import Sequential, model_from_json
 from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, UpSampling2D, Conv2DTranspose
+from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 import keras
 from preprocess224x224 import load_data
 import numpy as np
@@ -59,9 +60,15 @@ def train(x_train, y_train, x_test, y_test):
     model.compile(loss=keras.losses.mean_squared_error,
               optimizer=keras.optimizers.Adam(),
               metrics=['accuracy'])
+
+    # keras callback function
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
+                              patience=5, min_lr=0.001)
+    checkpointer = ModelCheckpoint(filepath='/tmp/weights.hdf5', verbose=1, save_best_only=True)
+    
     train_history = model.fit(x=x_train,  
                           y=y_train, validation_split=0.2,  
-                          epochs=10, batch_size=1, verbose=2)
+                          epochs=100, batch_size=1, verbose=2, callbacks=[reduce_lr, checkpointer])
     model.save('Deconvolution.h5')  # creates a HDF5 file 'Deconvolution.h5'
     #Deconvolution2D(3, 3, 3, output_shape=(None, 3, 14, 14),border_mode='valid',input_shape=(3, 12, 12))
     #model.add(UpSampling2D(size=(2, 2),input_shape=image_size))
