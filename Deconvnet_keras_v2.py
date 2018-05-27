@@ -64,7 +64,7 @@ def train(x_train, y_train, x_test, y_test):
     # keras callback function
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
                               patience=5, min_lr=0.001)
-    checkpointer = ModelCheckpoint(filepath='/tmp/weights.hdf5', verbose=1, save_best_only=True, period=10)
+    checkpointer = ModelCheckpoint(filepath='/tmp/weights.hdf5', verbose=1, save_best_only=True, period=10, save_weights_only=True)
     tensorboad_log = TensorBoard(log_dir='/tmp/Graph', histogram_freq=0, write_graph=True, write_images=False, embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None)
     
     train_history = model.fit(x=x_train,  
