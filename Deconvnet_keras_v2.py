@@ -80,7 +80,7 @@ if __name__=="__main__":
     y_train = []
     x_test = []
     y_test = []
-    (x_train, y_train), (x_test, y_test) = load_data(78)
+    (x_train, y_train), (x_test, y_test) = load_data(916)
     x_train = np.array(x_train, dtype=np.float32)
     y_train = np.array(y_train, dtype=np.float32)
     x_test = np.array(x_test, dtype=np.float32)
