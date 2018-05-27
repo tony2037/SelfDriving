@@ -61,7 +61,7 @@ def train(x_train, y_train, x_test, y_test):
               metrics=['accuracy'])
     train_history = model.fit(x=x_train,  
                           y=y_train, validation_split=0.2,  
-                          epochs=10, batch_size=1, verbose=2)
+                          epochs=100, batch_size=1, verbose=2)
     model.save('Deconvolution.h5')  # creates a HDF5 file 'Deconvolution.h5'
     #Deconvolution2D(3, 3, 3, output_shape=(None, 3, 14, 14),border_mode='valid',input_shape=(3, 12, 12))
     #model.add(UpSampling2D(size=(2, 2),input_shape=image_size))
@@ -72,7 +72,7 @@ if __name__=="__main__":
     y_train = []
     x_test = []
     y_test = []
-    (x_train, y_train), (x_test, y_test) = load_data(78)
+    (x_train, y_train), (x_test, y_test) = load_data(916)
     x_train = np.array(x_train, dtype=np.float32)
     y_train = np.array(y_train, dtype=np.float32)
     x_test = np.array(x_test, dtype=np.float32)
