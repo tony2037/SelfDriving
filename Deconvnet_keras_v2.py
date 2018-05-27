@@ -64,12 +64,12 @@ def train(x_train, y_train, x_test, y_test):
     # keras callback function
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
                               patience=5, min_lr=0.001)
-    checkpointer = ModelCheckpoint(filepath='/tmp/weights.hdf5', verbose=1, save_best_only=True, period=10)
+    checkpointer = ModelCheckpoint(filepath='/tmp/Model.h5', verbose=1, save_best_only=True, period=10)
     tensorboad_log = TensorBoard(log_dir='/tmp/Graph', histogram_freq=0, write_graph=True, write_images=False, embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None)
     
     train_history = model.fit(x=x_train,  
                           y=y_train, validation_split=0.2,  
-                          epochs=100, batch_size=8, verbose=2, callbacks=[reduce_lr, checkpointer, tensorboad_log])
+                          epochs=10, batch_size=8, verbose=2, callbacks=[reduce_lr, checkpointer, tensorboad_log])
     model.save('Deconvolution.h5')  # creates a HDF5 file 'Deconvolution.h5'
     #Deconvolution2D(3, 3, 3, output_shape=(None, 3, 14, 14),border_mode='valid',input_shape=(3, 12, 12))
     #model.add(UpSampling2D(size=(2, 2),input_shape=image_size))
