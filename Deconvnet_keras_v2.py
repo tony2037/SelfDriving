@@ -69,7 +69,7 @@ def train(x_train, y_train, x_test, y_test):
     
     train_history = model.fit(x=x_train,  
                           y=y_train, validation_split=0.2,  
-                          epochs=10, batch_size=8, verbose=2, callbacks=[reduce_lr, checkpointer, tensorboad_log])
+                          epochs=10, batch_size=8, verbose=2, callbacks=[reduce_lr, tensorboad_log])
     model.save('Deconvolution.h5')  # creates a HDF5 file 'Deconvolution.h5'
     #Deconvolution2D(3, 3, 3, output_shape=(None, 3, 14, 14),border_mode='valid',input_shape=(3, 12, 12))
     #model.add(UpSampling2D(size=(2, 2),input_shape=image_size))

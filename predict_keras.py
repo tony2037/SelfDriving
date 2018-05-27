@@ -51,7 +51,7 @@ def create_model():
     model.summary()
     return model
 
-def load_trained_model_with_FullModel(Model_path="./model/weights.hdf5", test_x_path="./dataset/dataset224x224/test_x/test.png"):
+def load_trained_model_with_FullModel(Model_path="Deconvolution.h5", test_x_path="./dataset/dataset224x224/test_x/test.png"):
     model = load_model(Model_path)
     test_x = cv2.imread(test_x_path)
     predict = model.predict(test_x, verbose=1)
