@@ -51,8 +51,20 @@ def create_model():
     model.summary()
     return model
 
+<<<<<<< HEAD
 def load_trained_model_with_FullModel(Model_path="Deconvolution.h5", test_x_path="./dataset/dataset224x224/test_x/test.png"):
     model = load_model(Model_path)
+=======
+def load_trained_model_with_FullModel(Model_json_path="./model/model.json", Weights_h5_path="./model/model.h5", test_x_path="./dataset/dataset224x224/test_x/test.png"):
+    # load json and create model
+    json_file = open('./model/model.json', 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    model = model_from_json(loaded_model_json)
+    # load weights into new model
+    model.load_weights("./model/model.h5")
+    print("Loaded model from disk")
+>>>>>>> 396b236440faa0e4b4c63312d6be926eda67ef46
     test_x = cv2.imread(test_x_path)
     predict = model.predict(test_x, verbose=1)
     print(predict.shape)
