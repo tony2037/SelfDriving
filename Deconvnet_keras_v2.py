@@ -70,7 +70,13 @@ def train(x_train, y_train, x_test, y_test):
     train_history = model.fit(x=x_train,  
                           y=y_train, validation_split=0.2,  
                           epochs=100, batch_size=8, verbose=2, callbacks=[reduce_lr, checkpointer, tensorboad_log])
-    model.save('Deconvolution.h5')  # creates a HDF5 file 'Deconvolution.h5'
+    # serialize model to JSON
+    model_json = model.to_json()
+    with open("./model/model.json", "w") as json_file:
+        json_file.write(model_json)
+    # serialize weights to HDF5
+    model.save_weights("./model/model.h5")
+    print("Saved model to disk")
     #Deconvolution2D(3, 3, 3, output_shape=(None, 3, 14, 14),border_mode='valid',input_shape=(3, 12, 12))
     #model.add(UpSampling2D(size=(2, 2),input_shape=image_size))
 
