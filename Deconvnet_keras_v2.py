@@ -69,7 +69,7 @@ def train(x_train, y_train, x_test, y_test):
     
     train_history = model.fit(x=x_train,  
                           y=y_train, validation_split=0.2,  
-                          epochs=100, batch_size=8, verbose=2, callbacks=[reduce_lr, checkpointer, tensorboad_log])
+                          epochs=10, batch_size=8, verbose=2, callbacks=[reduce_lr,  tensorboad_log])
     # serialize model to JSON
     model_json = model.to_json()
     with open("./model/model.json", "w") as json_file:

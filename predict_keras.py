@@ -53,6 +53,10 @@ def create_model():
     model.summary()
     return model
 
+<<<<<<< HEAD
+def load_trained_model_with_FullModel(Model_path="Deconvolution.h5", test_x_path="./dataset/dataset224x224/test_x/test.png"):
+    model = load_model(Model_path)
+=======
 def load_trained_model_with_FullModel(Model_json_path="./model/model.json", Weights_h5_path="./model/model.h5", test_x_path="./dataset/dataset224x224/test_x/test.png"):
     # load json and create model
     json_file = open('./model/model.json', 'r')
@@ -62,6 +66,7 @@ def load_trained_model_with_FullModel(Model_json_path="./model/model.json", Weig
     # load weights into new model
     model.load_weights("./model/model.h5")
     print("Loaded model from disk")
+>>>>>>> 396b236440faa0e4b4c63312d6be926eda67ef46
     test_x = cv2.imread(test_x_path)
     predict = model.predict([test_x], verbose=1)
     print(predict.shape)
@@ -76,6 +81,10 @@ def load_trained_model_with_weight(weights_path="./model/weights.hdf5", test_x_p
 
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
     os.environ["CUDA_VISIBLE_DEVICES"]="1"
     load_trained_model_with_FullModel()
+=======
+    load_trained_model_with_FullModel()
+>>>>>>> 7a15ab499c8eb2bd22c4d05edd25cb1204bd0172
