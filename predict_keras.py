@@ -1,6 +1,8 @@
-from keras.models import Model, Sequential, load_model
+from keras.models import Model, Sequential, load_model, model_from_json
 from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, UpSampling2D, Conv2DTranspose
 import cv2
+import os
+import numpy as np
 
 def create_model():
     image_size = (224,224,3)
@@ -61,7 +63,7 @@ def load_trained_model_with_FullModel(Model_json_path="./model/model.json", Weig
     model.load_weights("./model/model.h5")
     print("Loaded model from disk")
     test_x = cv2.imread(test_x_path)
-    predict = model.predict(test_x, verbose=1)
+    predict = model.predict([test_x], verbose=1)
     print(predict.shape)
 
 def load_trained_model_with_weight(weights_path="./model/weights.hdf5", test_x_path="./dataset/dataset224x224/test_x/test.png"):
@@ -69,9 +71,11 @@ def load_trained_model_with_weight(weights_path="./model/weights.hdf5", test_x_p
    model.load_weights(weights_path)
    test_x = cv2.imread(test_x_path)
    predict = model.predict(test_x, verbose=1)
-   print(predict.shape)
+   print(type(predict))
 
 
 
 if __name__ == "__main__":
+    os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
+    os.environ["CUDA_VISIBLE_DEVICES"]="1"
     load_trained_model_with_FullModel()
