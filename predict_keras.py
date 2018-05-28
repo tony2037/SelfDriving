@@ -69,6 +69,29 @@ def load_trained_model_with_FullModel(Model_json_path="./model/model.json", Weig
 
     return model
 
+def one_hot_to_BGR(one_hot):
+    """
+    label = {
+        "car": [142, 0, 0],
+        "road": [128, 64, 128],
+        "sky": [180, 130, 70],
+        "parking": [160, 170, 250],
+        "else": []
+    }
+    BGR
+    """
+    if((one_hot == [1,0,0,0,0]).all()):
+        return [142,0,0]
+    elif((one_hot == [0,1,0,0,0]).all()):
+        return [128,64,128]
+    elif((one_hot == [0,0,1,0,0]).all()):
+        return [180,130,0]
+    elif((one_hot == [0,0,0,1,0]).all()):
+        return [160,170,250]
+    else :
+        return [128,128,128]
+
+
 def predict(model, test_x_path="./dataset/dataset224x224/test_x/", predict_save_path="./dataset/dataset224x224/test_y/"):
     test_x_list = glob(test_x_path+"*.png")
     test_x = np.zeros((len(test_x_list, 224, 224, 3)))
