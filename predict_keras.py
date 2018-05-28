@@ -80,6 +80,14 @@ def one_hot_to_BGR(one_hot):
     }
     BGR
     """
+    # transfer to one_hot
+    max_value = max(one_hot)
+    for i in range(0,len(one_hot)):
+        if(one_hot[i] == max_value):
+            one_hot[i] = 1
+        else:
+            one_hot[i] = 0
+    
     if((one_hot == [1,0,0,0,0]).all()):
         return [142,0,0]
     elif((one_hot == [0,1,0,0,0]).all()):
@@ -93,11 +101,22 @@ def one_hot_to_BGR(one_hot):
 
 
 def predict(model, test_x_path="./dataset/dataset224x224/test_x/", predict_save_path="./dataset/dataset224x224/test_y/"):
-    test_x_list = glob(test_x_path+"*.png")
-    test_x = np.zeros((len(test_x_list, 224, 224, 3)))
+    test_x_list = glob.glob(test_x_path+"*.png")
+    test_x = np.zeros((len(test_x_list), 224, 224, 3))
     for i in range(0, len(test_x_list)):
         test_x[i] = cv2.imread(test_x_list[i])
     predict = model.predict(test_x, verbose=1)
+    
+    test_y = np.zeros((len(test_x_list), 224, 224, 3))
+    for i in range(0, test_y.shape[0]):
+        for w in range(0, test_y.shape[1]):
+            for h in range(0, test_y.shape[2]):
+                test_y[i][w][h] = one_hot_to_BGR(predict[i][w][h])
+
+    for i in range(0, test_y.shape[0]):
+        file_name = "predict_{}.png".format(i)
+        cv2.imwrite(predict_save_path+file_name, test_y[i])
+        
 
 
 def load_trained_model_with_weight(weights_path="./model/weights.hdf5", test_x_path="./dataset/dataset224x224/test_x/test.png"):
@@ -105,11 +124,12 @@ def load_trained_model_with_weight(weights_path="./model/weights.hdf5", test_x_p
    model.load_weights(weights_path)
    test_x = cv2.imread(test_x_path)
    predict = model.predict(test_x, verbose=1)
-   print(type(predict))
+   
 
 
 
 if __name__ == "__main__":
     os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
     os.environ["CUDA_VISIBLE_DEVICES"]="1"
-    load_trained_model_with_FullModel()
+    model = load_trained_model_with_FullModel()
+    predict(model)
