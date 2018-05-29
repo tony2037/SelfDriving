@@ -2,3 +2,4 @@ dataset/
 Deconvolution.h5
 architecture
 /model
+__pycache__/
