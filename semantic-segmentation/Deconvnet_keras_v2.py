@@ -1,15 +1,13 @@
 from keras.models import Sequential, model_from_json
 from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, UpSampling2D, Conv2DTranspose
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, TensorBoard
-import keras
+from keras.optimizers import Adam
 from preprocess224x224 import load_data
 import numpy as np
 
 
 
 def train(x_train, y_train, x_test, y_test):
-    print(x_train[77].shape)
-    print(y_train[77].shape)
     image_size = (224,224,3)
     model = Sequential()
     model.add(Conv2D(64, (3, 3),strides=(1, 1), padding='same', input_shape=image_size, activation='relu'))
@@ -57,19 +55,18 @@ def train(x_train, y_train, x_test, y_test):
     model.add(Conv2D(5, (1, 1),strides=(1, 1), padding='same', activation='softmax'))
     model.summary()
 
-    model.compile(loss=keras.losses.categorical_crossentropy,
-              optimizer=keras.optimizers.Adam(),
-              metrics=['accuracy'])
+    model.compile(loss = 'categorical_crossentropy',
+              optimizer = Adam(),
+              metrics = ['accuracy'])
 
     # keras callback function
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
-                              patience=5, min_lr=0.001)
-    checkpointer = ModelCheckpoint(filepath='/tmp/weights.hdf5', verbose=1, save_best_only=True, period=10, save_weights_only=True)
-    tensorboad_log = TensorBoard(log_dir='/tmp/Graph', histogram_freq=0, write_graph=True, write_images=False, embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None)
-    
-    train_history = model.fit(x=x_train,  
-                          y=y_train, validation_split=0.2,  
-                          epochs=10, batch_size=8, verbose=2, callbacks=[reduce_lr,  tensorboad_log])
+    reduce_lr = ReduceLROnPlateau(monitor = 'val_loss', factor = 0.2,
+                              patience = 5, min_lr = 0.001)
+    checkpointer = ModelCheckpoint(filepath = '/tmp/weights.hdf5', verbose = 1, save_best_only = True, period = 10, save_weights_only = True)
+    tensorboad_log = TensorBoard(log_dir = '/tmp/Graph', histogram_freq = 0, write_graph = True, write_images = False, embeddings_freq = 0, embeddings_layer_names = None, embeddings_metadata = None)
+
+    train_history = model.fit(x_train, y_train, validation_split = 0.2,
+                          epochs = 10, batch_size = 8, verbose = 2, callbacks = [reduce_lr,  tensorboad_log])
     # serialize model to JSON
     model_json = model.to_json()
     with open("./model/model.json", "w") as json_file:
@@ -81,7 +78,7 @@ def train(x_train, y_train, x_test, y_test):
     #model.add(UpSampling2D(size=(2, 2),input_shape=image_size))
 
 if __name__=="__main__":
-    
+
     x_train = []
     y_train = []
     x_test = []

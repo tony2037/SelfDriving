@@ -2,18 +2,18 @@ import cv2, glob
 import numpy as np
 
 
-def resize_224x224():
+def resize(height, width):
     x_path = "./dataset/leftImg8bit/train/zurich/"
     y_path = "./dataset/gtFine/train/zurich/"
 
     x_save_path = "./dataset/dataset224x224/x_/"
     y_save_path = "./dataset/dataset224x224/y_/"
 
-    log_path = "./dataset/dataset224x224/x/log"
-    log = open(log_path)
-    counter = log.read()
-    counter = int(counter)
-    log.close()
+    # log_path = "./dataset/dataset224x224/x/log"
+    # log = open(log_path)
+    # counter = log.read()
+    # counter = int(counter)
+    # log.close()
 
     x_list = glob.glob(x_path + "*.png")
     y_list = []
@@ -39,26 +39,22 @@ def resize_224x224():
     #pic = cv2.resize(pic, (224, 224), interpolation=cv2.INTER_CUBIC)
 
 def BGR_to_one_hot(BGR):
-    """
-    label = {
-        "car": [142, 0, 0],
-        "road": [128, 64, 128],
-        "sky": [180, 130, 70],
-        "parking": [160, 170, 250],
-        "else": []
-    }
-    BGR
-    """
-    if((BGR == [142, 0, 0]).all()):
-        return [1, 0, 0, 0, 0]
-    elif((BGR == [128, 64, 128]).all()):
-        return [0, 1, 0, 0, 0]
-    elif((BGR == [180, 130, 0]).all()):
-        return [0, 0, 1, 0, 0]
-    elif((BGR == [160, 170, 250]).all()):
-        return [0, 0, 0, 1, 0]
+    pixel2label = [
+        [142, 0, 0],     # car
+        [128, 64, 128],  # road
+        [180, 130, 0],   # sky
+        [160, 170, 250], # parking
+    ]
+
+    vec = [0] * 5
+    BGR = BGR.tolist()
+
+    if BGR in pixel2label:
+        vec[pixel2label.index(BGR)] = 1
     else:
-        return [0, 0, 0, 0, 1]
+        vec[4] = 1
+
+    return vec
 
 def y_to_npy():
     """
@@ -95,8 +91,8 @@ def y_to_npy():
         np.save(y_path + i[27:-4] + ".npy", encoded)
 
 def load_data(total_number=916):
-    x_path = "./dataset/dataset224x224/x/"
-    y_path = "./dataset/dataset224x224/y/"
+    x_path = "./data/x/"
+    y_path = "./data/y/"
 
     x_train = []
     y_train = []
